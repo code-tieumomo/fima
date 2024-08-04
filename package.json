@@ -15,8 +15,9 @@
     "dayjs": "^1.11.12",
     "nuxt": "^3.12.4",
     "nuxtjs-naive-ui": "latest",
-    "vue": "latest",
-    "unplugin-vue-components": "^0.27.3"
+    "unplugin-auto-import": "^0.18.2",
+    "unplugin-vue-components": "^0.27.3",
+    "vue": "latest"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
