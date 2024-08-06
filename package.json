@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxt/icon": "latest",
     "@nuxtjs/supabase": "latest",
     "@vite-pwa/nuxt": "latest",
     "dayjs": "^1.11.12",

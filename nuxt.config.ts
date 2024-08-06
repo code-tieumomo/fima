@@ -7,9 +7,12 @@ const sw = process.env.SW === "true";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  app: {
+    pageTransition: { name: "page", mode: "out-in" }
+  },
   compatibilityDate: "2024-04-03",
   css: ["~/assets/main.scss"],
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   ssr: false,
 
   postcss: {
@@ -19,7 +22,7 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: ["nuxtjs-naive-ui", "@nuxtjs/supabase", "@vite-pwa/nuxt"],
+  modules: ["nuxtjs-naive-ui", "@nuxtjs/supabase", "@vite-pwa/nuxt", "@nuxt/icon"],
 
   vite: {
     plugins: [
@@ -85,7 +88,7 @@ export default defineNuxtConfig({
       navigateFallback: "/"
     },
     devOptions: {
-      enabled: true,
+      // enabled: true,
       type: "module"
     }
   }
