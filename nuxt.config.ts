@@ -52,7 +52,9 @@ export default defineNuxtConfig({
     manifest: {
       name: "Fima",
       short_name: "Fima",
+      display: "standalone",
       description: "My finance manager",
+      background_color: "#ffffff",
       theme_color: "#ffffff",
       icons: [
         {
