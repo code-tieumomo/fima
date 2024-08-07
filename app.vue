@@ -1,10 +1,14 @@
 <template>
   <div>
-    <NuxtPwaManifest/>
-    <NuxtLoadingIndicator/>
-    <NuxtLayout>
-      <NuxtPage :keepalive="true"/>
-    </NuxtLayout>
+    <NMessageProvider>
+      <NModalProvider>
+        <NuxtPwaManifest/>
+        <NuxtLoadingIndicator/>
+        <NuxtLayout>
+          <NuxtPage :keepalive="true"/>
+        </NuxtLayout>
+      </NModalProvider>
+    </NMessageProvider>
   </div>
 </template>
 <script setup lang="ts">

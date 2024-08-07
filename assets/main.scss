@@ -10,3 +10,14 @@
     font-family: "Sen", sans-serif;
   }
 }
+
+// Modal
+.n-modal-container {
+  .n-card-header {
+    @apply px-4 py-2
+  }
+
+  .n-card__content {
+    @apply mx-4 py-4 #{!important}
+  }
+}

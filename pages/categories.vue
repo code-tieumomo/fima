@@ -41,7 +41,7 @@ const save = async () => {
   if (error) {
     message.error(error.message);
   } else {
-    message.success("Saved successfully");
+    message.success("Lưu thành công");
   }
   isSaving.value = false;
 }
@@ -50,15 +50,15 @@ const save = async () => {
 <template>
   <div>
     <div class="flex flex-col p-4">
-      <h1 class="text-lg font-bold">Categories</h1>
+      <h1 class="text-lg font-bold">Danh mục</h1>
       <hr class="my-4">
-      <h2 class="text-sm font-semibold">Outcomes</h2>
+      <h2 class="text-sm font-semibold">Chi</h2>
       <NDynamicTags class="mt-4" size="large" v-model:value="outcomeCates" @create="(label) => onCreateCate(label, 'outcome')"/>
       <hr class="my-4">
-      <h2 class="text-sm font-semibold">Incomes</h2>
+      <h2 class="text-sm font-semibold">Thu</h2>
       <NDynamicTags class="mt-4" size="large" v-model:value="incomeCates" @create="(label) => onCreateCate(label, 'income')"/>
       <NButton class="w-full mt-8" type="primary" @click="save" size="large" :loading="isSaving" :disable="isSaving">
-        Save
+        Lưu
       </NButton>
     </div>
   </div>
