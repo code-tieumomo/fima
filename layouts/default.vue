@@ -3,8 +3,10 @@ import {
   type FormInst, useMessage
 } from "naive-ui";
 import dayjs from "dayjs";
+import type Category from "~/types/ICategory";
 
 const notFirstTime = useCookie("not_first_time");
+const categoriesStore = useCategoriesStore();
 
 const showModal = ref(false);
 const bodyStyle = reactive({
@@ -15,48 +17,14 @@ const segmented = reactive({
   content: "soft",
   footer: "soft"
 });
+const typeOptions = ref<Category[]>([]);
 
 const start = () => {
   notFirstTime.value = (new Date()).getTime().toString();
 };
 
-const typeOptions = [
-  {
-    label: "Ăn uống",
-    value: "food"
-  },
-  {
-    label: "Mua sắm",
-    value: "shopping"
-  },
-  {
-    label: "Giải trí",
-    value: "entertainment"
-  },
-  {
-    label: "Đi lại",
-    value: "transport"
-  },
-  {
-    label: "Cố định",
-    value: "fixed"
-  },
-  {
-    label: "Vật nuôi",
-    value: "pet"
-  },
-  {
-    label: "Sức khỏe",
-    value: "health"
-  },
-  {
-    label: "Khác",
-    value: "other"
-  }
-];
-
 const getLabel = (value: string) => {
-  const option = typeOptions.find((item) => item.value === value);
+  const option = typeOptions.value.find((item) => item.value === value);
   return option ? option.label : "";
 };
 
@@ -79,6 +47,21 @@ const form = reactive({
   date: (new Date()).getTime()
 });
 
+watch(
+  [form, categoriesStore.categories],
+  (_) => {
+    switch (form.transactionType) {
+      case "outcome":
+        typeOptions.value = categoriesStore.categories.outcome;
+        break;
+      case "income":
+        typeOptions.value = categoriesStore.categories.income;
+        break;
+    }
+  },
+  { immediate: true }
+);
+
 const parse = (input: string) => {
   const nums = input.replace(/,/g, "").trim();
   if (/^\d+(\.(\d+)?)?$/.test(nums))
@@ -96,23 +79,19 @@ const rules = {
   date: {
     required: true,
     message: "Phải nhập ngày",
-    trigger: "blur",
     type: "number"
   },
   type: {
     required: true,
-    message: "Phải chọn loại chi tiêu",
-    trigger: "blur"
+    message: "Phải chọn loại chi tiêu"
   },
   transactionType: {
     required: true,
-    message: "Phải chọn loại giao dịch",
-    trigger: "blur"
+    message: "Phải chọn loại giao dịch"
   },
   amount: {
     required: true,
     message: "Phải nhập số tiền",
-    trigger: "blur",
     type: "number"
   }
 };
@@ -136,9 +115,15 @@ const storeExpense = async () => {
         }
       ]).select();
       message.success("Thêm chi tiêu thành công");
+      showModal.value = false;
+      navigateTo("/");
     }
   });
 };
+
+onMounted(async () => {
+  await categoriesStore.fetchCategories();
+});
 </script>
 
 <template>
@@ -171,7 +156,7 @@ const storeExpense = async () => {
         <Icon name="hugeicons:money-bag-02" size="20"/>
         Ngân sách
       </NuxtLink>
-      <NuxtLink to="/create" class="flex flex-col items-center gap-1 text-xs">
+      <NuxtLink to="/wallets" class="flex flex-col items-center gap-1 text-xs">
         <Icon name="hugeicons:wallet-02" size="20"/>
         Ví
       </NuxtLink>
@@ -190,14 +175,14 @@ const storeExpense = async () => {
         <NFormItem label="Ngày" path="date">
           <NDatePicker size="large" class="w-full" v-model:value="form.date" type="date" placeholder="..."/>
         </NFormItem>
-        <NFormItem label="Loại chi tiêu" path="type">
-          <NSelect size="large" v-model:value="form.type" :options="typeOptions" placeholder="..."/>
-        </NFormItem>
-        <NFormItem label="Giao dịch" path="transactionType">
+        <NFormItem label="Danh mục" path="transactionType">
           <NRadioGroup size="large" class="w-full" name="transaction-type" v-model:value="form.transactionType">
             <NRadioButton class="w-1/2 text-center" v-for="item in transactionTypeOptions" :key="item.value"
                           :value="item.value" :label="item.label"/>
           </NRadioGroup>
+        </NFormItem>
+        <NFormItem label="Loại chi tiêu" path="type">
+          <NSelect size="large" v-model:value="form.type" :options="typeOptions" placeholder="..."/>
         </NFormItem>
         <NFormItem label="Số tiền" path="amount">
           <NInputNumber size="large" class="w-full" v-model:value="form.amount" placeholder="..." :parse="parse"

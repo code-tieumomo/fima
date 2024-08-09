@@ -1,41 +1,37 @@
 <script setup lang="ts">
+import { useMessage } from "naive-ui";
+
 useHead({
   title: "Categories"
 });
 
 const client = useSupabaseClient();
 const message = useMessage();
+const categoriesStore = useCategoriesStore();
 
-const outcomeCates = ref([]);
-const incomeCates = ref([]);
 const isSaving = ref(false);
-
-onMounted(async () => {
-  let { data: rawCates, error } = await client.from("categories").select("*");
-  outcomeCates.value = rawCates?.filter(cate => cate.type === "outcome");
-  incomeCates.value = rawCates?.filter(cate => cate.type === "income");
-});
 
 const onCreateCate = (label: String, type: String) => {
   return {
     label,
-    slug: slugify(label),
-    type: type,
-  }
-}
+    value: slugify(label),
+    type: type
+  };
+};
 
 const save = async () => {
   isSaving.value = true;
-  const rawData = [...outcomeCates.value, ...incomeCates.value].map(cate => {
+  const rawData = [...categoriesStore.categories.income, ...categoriesStore.categories.outcome].map(cate => {
     return {
       label: cate.label,
-      slug: cate.slug,
-      type: cate.type,
-    }
+      value: cate.value,
+      type: cate.type
+    };
   });
-  const response = await client.from('categories').delete().neq('id', 0);
+  await client.from("categories").delete().neq("id", 0);
   const { data, error } = await client
     .from("categories")
+    // @ts-ignore
     .insert(rawData)
     .select();
   if (error) {
@@ -44,7 +40,7 @@ const save = async () => {
     message.success("Lưu thành công");
   }
   isSaving.value = false;
-}
+};
 </script>
 
 <template>
@@ -53,10 +49,12 @@ const save = async () => {
       <h1 class="text-lg font-bold">Danh mục</h1>
       <hr class="my-4">
       <h2 class="text-sm font-semibold">Chi</h2>
-      <NDynamicTags class="mt-4" size="large" v-model:value="outcomeCates" @create="(label) => onCreateCate(label, 'outcome')"/>
+      <NDynamicTags class="mt-4" size="large" v-model:value="categoriesStore.categories.outcome"
+                    @create="(label: String) => onCreateCate(label, 'outcome')"/>
       <hr class="my-4">
       <h2 class="text-sm font-semibold">Thu</h2>
-      <NDynamicTags class="mt-4" size="large" v-model:value="incomeCates" @create="(label) => onCreateCate(label, 'income')"/>
+      <NDynamicTags class="mt-4" size="large" v-model:value="categoriesStore.categories.income"
+                    @create="(label: String) => onCreateCate(label, 'income')"/>
       <NButton class="w-full mt-8" type="primary" @click="save" size="large" :loading="isSaving" :disable="isSaving">
         Lưu
       </NButton>

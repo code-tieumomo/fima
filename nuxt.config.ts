@@ -22,7 +22,7 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: ["nuxtjs-naive-ui", "@nuxtjs/supabase", "@vite-pwa/nuxt", "@nuxt/icon"],
+  modules: ["nuxtjs-naive-ui", "@nuxtjs/supabase", "@vite-pwa/nuxt", "@nuxt/icon", "@pinia/nuxt"],
 
   vite: {
     plugins: [
