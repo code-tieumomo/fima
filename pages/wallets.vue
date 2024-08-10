@@ -5,9 +5,10 @@ useHead({
   title: "Ví"
 });
 
-const formRef = ref<FormInst | null>(null);
 const message = useMessage();
 const client = useSupabaseClient();
+
+const formRef = ref<FormInst | null>(null);
 const wallets = ref([]);
 const expenses = ref([]);
 const showModal = ref(false);

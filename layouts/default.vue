@@ -9,6 +9,7 @@ const notFirstTime = useCookie("not_first_time");
 const categoriesStore = useCategoriesStore();
 
 const showModal = ref(false);
+const isSaving = ref(false);
 const bodyStyle = reactive({
   width: "600px",
   height: "100dvh"
@@ -99,12 +100,14 @@ const rules = {
 const formRef = ref<FormInst | null>(null);
 const message = useMessage();
 const client = useSupabaseClient();
+const expensesStore = useExpensesStore();
 
 const storeExpense = async () => {
   formRef.value?.validate(async (errors: Array) => {
     if (errors) {
       message.error(errors[0][0].message);
     } else {
+      isSaving.value = true;
       const { data: expense } = await client.from("expenses").insert([
         {
           type: form.type,
@@ -114,8 +117,13 @@ const storeExpense = async () => {
           date: dayjs(form.date).format("YYYY-MM-DD")
         }
       ]).select();
+      await Promise.all([
+        expensesStore.fetchExpenses(),
+        expensesStore.fetchAllCompactExpenses()
+      ]);
       message.success("Thêm chi tiêu thành công");
       showModal.value = false;
+      isSaving.value = false;
       navigateTo("/");
     }
   });
@@ -148,11 +156,11 @@ onMounted(async () => {
         <Icon name="hugeicons:home-01" size="20"/>
         Trang chủ
       </NuxtLink>
-      <NuxtLink to="/create" class="flex flex-col items-center gap-1 text-xs">
+      <NuxtLink class="opacity-40 flex flex-col items-center gap-1 text-xs">
         <Icon name="hugeicons:pie-chart" size="20"/>
         Phân tích
       </NuxtLink>
-      <NuxtLink to="/create" class="flex flex-col items-center gap-1 text-xs">
+      <NuxtLink class="opacity-40 flex flex-col items-center gap-1 text-xs">
         <Icon name="hugeicons:money-bag-02" size="20"/>
         Ngân sách
       </NuxtLink>
@@ -196,13 +204,15 @@ onMounted(async () => {
           <NInput size="large" v-model:value="form.description" type="textarea" placeholder="..."/>
         </NFormItem>
       </NForm>
-      <NButton class="w-full" type="primary" @click="storeExpense">Thêm</NButton>
+      <NButton class="w-full" type="primary" @click="storeExpense" :loading="isSaving" :disabled="isSaving">
+        Thêm
+      </NButton>
     </NModal>
   </div>
 </template>
 
 <style scoped>
 .router-link-active {
-  @apply text-emerald-600;
+  @apply text-emerald-600 font-semibold;
 }
 </style>

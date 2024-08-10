@@ -2,11 +2,13 @@
   <div>
     <NMessageProvider>
       <NModalProvider>
-        <NuxtPwaManifest/>
-        <NuxtLoadingIndicator/>
-        <NuxtLayout>
-          <NuxtPage :keepalive="true"/>
-        </NuxtLayout>
+        <NDialogProvider>
+          <NuxtPwaManifest/>
+          <NuxtLoadingIndicator/>
+          <NuxtLayout>
+            <NuxtPage :keepalive="false"/>
+          </NuxtLayout>
+        </NDialogProvider>
       </NModalProvider>
     </NMessageProvider>
   </div>
